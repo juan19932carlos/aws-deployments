@@ -23,8 +23,16 @@
 ## Toolchain
 
 - All tools are pinned in `mise.toml`; uv manages Python dependencies.
+- Node is pinned in mise only for the docs site. Keep `node-version` in `.github/workflows/docs.yml` in line with it.
 - Python stays on 3.14 to match an available Lambda runtime, even though mise offers 3.15.
 - No root mise tasks yet; deciding later whether to add them.
+
+## Docs
+
+- `architecture/` holds ADRs, `infrastructure.md` and the journal, shown by the Docusaurus site in `architecture/site`.
+- Rules for these docs and for the journal are in `.claude/rules/architecture-docs.md` and `.claude/rules/journal.md`.
+- Add each working session to the journal: one file per day, new segments for later work that day.
+- The site deploys to GitHub Pages under `/aws-deploy/`, so links and assets must not be root-absolute.
 
 ## Testing
 
