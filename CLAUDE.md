@@ -34,7 +34,7 @@
 
 - `architecture/` holds ADRs, `infrastructure.md` and the journal, shown by the Docusaurus site in `architecture/site`.
 - Rules for these docs and for the journal are in `.claude/rules/architecture-docs.md` and `.claude/rules/journal.md`.
-- Add each working session to the journal: one file per day, new segments for later work that day.
+- Add each AWS deployment session to the journal: one file per day, new segments for later work that day.
 - The site deploys to GitHub Pages under `/aws-deployments/`, so links and assets must not be root-absolute.
 - `README.md` says what the project is about and is the site homepage. Usage commands do not go there.
 - The site build copies `README.md` to `src/pages/index.md` (gitignored). Edit the README, never the copy.

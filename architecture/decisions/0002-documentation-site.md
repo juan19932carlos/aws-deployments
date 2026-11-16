@@ -5,18 +5,20 @@
 
 ## Context
 
-We want a journal of what was tried while learning AWS deployment, plus the lasting decisions. Same structure as the earlier `aws-xray-example` project, so both read the same way.
+We want a journal of what was tried while learning AWS deployment, plus the lasting decisions, readable as a site.
 
 ## Decision
 
 | Area | Choice | Rejected | Why |
 | --- | --- | --- | --- |
-| Documentation site | Docusaurus in docs mode, two docs instances (decisions, journal) | Docusaurus blog mode, one dated post per entry | Same layout as `aws-xray-example`. Numbered daily files with segments fit a working journal better than blog posts. |
-| Package manager for the site | npm, standalone package in `architecture/site` | pnpm workspace, as in `aws-xray-example` | This repo is a Python uv workspace. There is no Node workspace to join, so a second package manager adds nothing. |
+| Documentation site | Docusaurus in docs mode, two docs instances (decisions, journal) | Docusaurus blog mode, one dated post per entry | Numbered daily files with segments fit a working journal better than blog posts. |
+| Node package manager | pnpm workspace at the repo root, versions in a `catalog:` | npm, standalone package in `architecture/site` | Catalogs keep one version per dependency across packages, and pnpm isolates dependencies strictly. Future Node packages join the same workspace. |
 
 ## Consequences
 
 - The site reads `architecture/decisions` and `architecture/journal` in place, so the markdown has one source.
 - Mermaid works through `@docusaurus/theme-mermaid`.
-- Node is pinned in `mise.toml` only for this site.
-- A GitHub Actions workflow publishes it to GitHub Pages on every push to `main` that touches `architecture/`.
+- `pnpm-workspace.yaml` lists the Node packages. Python stays in the uv workspace; the two do not mix.
+- Node and pnpm are pinned in `mise.toml`. pnpm is also pinned in `packageManager` of the root `package.json`, which CI reads.
+- Install scripts are blocked by default. Each one must be allowed or denied in `allowBuilds`.
+- A GitHub Actions workflow publishes the site to GitHub Pages on every push to `main` that touches the docs.

@@ -31,30 +31,8 @@
 * **Finding / Technical note:** `Errors` counts only failed invocations (exception, timeout, out of memory). Returning `statusCode: 500` is not an error to Lambda. The alarm watches only the new version (`ExecutedVersion`).
 * **Finding / Technical note:** CodeDeploy ignores the hook's return value. The hook must call `PutLifecycleEventHookExecutionStatus` with `Succeeded` or `Failed`. The SAM-created role only invokes functions named `CodeDeployHook_*`.
 
-## 6. Segment: Documentation site
-* **Action:** Added `architecture/` with ADRs, an infrastructure page and this journal, shown by Docusaurus in `architecture/site`. Same structure as `aws-xray-example`.
-* **Result:** ✅ *Worked*. The site builds.
-* **Finding / Technical note:** First tried Docusaurus blog mode in `journal/`, then switched to the docs layout of the earlier project.
-* **Finding / Technical note:** `@docusaurus/theme-mermaid` 3.10.2 needs `@mermaid-js/layout-elk@^0.1.9` (1.x is rejected). `@docusaurus/tsconfig` sets `baseUrl`, which TypeScript 6 deprecates.
-
-## 7. Segment: GitHub Pages pipeline
-* **Action:** Added `.github/workflows/docs.yml`: builds `architecture/site` and deploys it to GitHub Pages on push to `main`.
-* **Result:** ⚠️ *With warnings*. Pushed to `github.com/juan19932carlos/aws-deployments`. First run failed in `configure-pages`: Pages was not enabled. Enabled it with source *GitHub Actions*.
-* **Finding / Technical note:** Pages serves the site under the repo name, `/aws-deployments/`, so that is the `baseUrl` and links must not be root-absolute.
-* **Finding / Technical note:** The workflow's `GITHUB_TOKEN` cannot turn Pages on; that needs repo admin, so it is a one-time manual step. Push over SSH needed `~/.ssh/config` to name the non-default key `personal-gh`.
-
-## 8. Segment: npm to pnpm
-* **Action:** Replaced npm with a pnpm workspace: `pnpm-workspace.yaml` lists `architecture/site` and holds a `catalog:` of versions. pnpm pinned in mise.
-* **Result:** ✅ *Worked*. Install, typecheck and build pass locally.
-* **Finding / Technical note:** npm has workspaces, but no catalogs and no strict isolation. pnpm blocks install scripts by default: `allowBuilds` denies `core-js`, which only prints a funding message.
-
-## 9. Segment: README as the site homepage
-* **Action:** Rewrote `README.md` to say what the project is about, without usage steps. The site build copies it to `src/pages/index.md`, so it is the homepage.
-* **Result:** ✅ *Worked*. The site builds locally with the README at `/`.
-* **Finding / Technical note:** First tried a docs instance with `path` at the repo root and `include: ['README.md']`. `include` filters pages, but the MDX loader rule covers the whole `path`, so it also took the journal files and the build failed.
-
 ---
 
 ## 📌 Summary and Next Steps
 * **Key achievements:** Reproducible toolchain, uv workspace that SAM can build, gradual deployment defined in the template.
-* **Technical debt or pending items for tomorrow:** First `sam deploy`. Change `app.py` and deploy again to watch the traffic shift. Set `HOOK_STATUS: Failed` to watch a rollback. Decide on root mise tasks.
+* **Technical debt or pending items for tomorrow:** First `sam deploy`. Change `app.py` and deploy again to watch the traffic shift. Set `HOOK_STATUS: Failed` to watch a rollback.
