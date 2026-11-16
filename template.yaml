@@ -20,6 +20,14 @@ Resources:
       Runtime: python3.14
       Architectures:
         - x86_64
+      # Publishes a new immutable version on each code change and moves the `live` alias to it.
+      AutoPublishAlias: live
+      DeploymentPreference:
+        Type: Linear10PercentEvery1Minute
+        Alarms:
+          - !Ref ErrorsAlarm
+        Hooks:
+          PreTraffic: !Ref PreTrafficHook
       Events:
         HelloWorld:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
@@ -29,6 +37,59 @@ Resources:
     Metadata:
       # Deliberate: build with uv via apps/hello_world/Makefile; SAM's pip builder ignores uv.lock.
       BuildMethod: makefile
+
+  # Fires if the NEW version throws any unhandled error during the shift -> CodeDeploy rolls back.
+  ErrorsAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmDescription: Errors > 0 on the new version behind the live alias
+      Namespace: AWS/Lambda
+      MetricName: Errors
+      Dimensions:
+        - Name: Resource
+          Value: !Sub "${HelloWorldFunction}:live"
+        - Name: FunctionName
+          Value: !Ref HelloWorldFunction
+        - Name: ExecutedVersion
+          Value: !GetAtt HelloWorldFunction.Version.Version
+      Statistic: Sum
+      Period: 60
+      EvaluationPeriods: 1
+      Threshold: 0
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+
+  # CodeDeploy invokes this before shifting any traffic and waits for it to report a status.
+  PreTrafficHook:
+    Type: AWS::Serverless::Function
+    Properties:
+      # Deliberate: SAM's CodeDeploy role may only invoke functions named CodeDeployHook_*.
+      FunctionName: !Sub "CodeDeployHook_${AWS::StackName}-PreTraffic"
+      # Deliberate: inline because it is deployment plumbing, not app code under apps/.
+      Handler: index.handler
+      Runtime: python3.14
+      Timeout: 10
+      Environment:
+        Variables:
+          # Set to Failed to simulate a failing check and watch CodeDeploy roll back.
+          HOOK_STATUS: Succeeded
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action: codedeploy:PutLifecycleEventHookExecutionStatus
+              Resource: !Sub "arn:${AWS::Partition}:codedeploy:${AWS::Region}:${AWS::AccountId}:deploymentgroup:${ServerlessDeploymentApplication}/*"
+      InlineCode: |
+        import os, boto3
+        cd = boto3.client("codedeploy")
+        def handler(event, context):
+            status = os.environ["HOOK_STATUS"]
+            print(f"PreTraffic -> {status}")
+            cd.put_lifecycle_event_hook_execution_status(
+                deploymentId=event["DeploymentId"],
+                lifecycleEventHookExecutionId=event["LifecycleEventHookExecutionId"],
+                status=status,
+            )
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
