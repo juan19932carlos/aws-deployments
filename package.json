@@ -1,0 +1,10 @@
+{
+  "name": "aws-deploy",
+  "private": true,
+  "packageManager": "pnpm@12.21.0",
+  "scripts": {
+    "dev:docs": "pnpm --filter docs start",
+    "build:docs": "pnpm --filter docs build",
+    "typecheck": "pnpm -r typecheck"
+  }
+}

@@ -8,4 +8,4 @@
 - `architecture/infrastructure.md` describes the stack as it is, with Mermaid diagrams. Update it in the same commit that changes `template.yaml`.
 - `architecture/journal/` holds the journal. See `.claude/rules/journal.md`.
 - `architecture/site/` is the Docusaurus site that shows `decisions/` and `journal/`. A new top-level section needs its own docs plugin instance in `architecture/site/docusaurus.config.ts`.
-- The site is not an app: it stays out of `apps/` and out of the uv workspace. It is a standalone npm package.
+- The site is not an app: it stays out of `apps/` and out of the uv workspace. It is a pnpm workspace package (`pnpm-workspace.yaml`).

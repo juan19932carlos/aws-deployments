@@ -23,7 +23,10 @@
 ## Toolchain
 
 - All tools are pinned in `mise.toml`; uv manages Python dependencies.
-- Node is pinned in mise only for the docs site. Keep `node-version` in `.github/workflows/docs.yml` in line with it.
+- Node and pnpm are pinned in mise. Keep `node-version` in `.github/workflows/docs.yml` in line with mise.
+- Keep `packageManager` in `package.json` in line with pnpm in mise; CI reads the pnpm version from it.
+- Node packages use pnpm only, never npm or yarn. Versions live in the `catalog:` of `pnpm-workspace.yaml`.
+- Deliberate: pnpm over npm for catalogs and strict dependencies, so future Node apps share one workspace.
 - Python stays on 3.14 to match an available Lambda runtime, even though mise offers 3.15.
 - No root mise tasks yet; deciding later whether to add them.
 

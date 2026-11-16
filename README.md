@@ -12,7 +12,8 @@ It currently uses SAM as the deployment tool, organized as a uv workspace.
 | `template.yaml` | SAM template; each function's `CodeUri` points to its app |
 | `architecture/` | ADRs, infrastructure diagrams and the working journal |
 | `architecture/site/` | Docusaurus site for `architecture/`, published to GitHub Pages |
-| `mise.toml` | Pinned toolchain: aws-cli, aws-sam, make, Node, Python, uv |
+| `pnpm-workspace.yaml` | Node workspace (docs site) and the `catalog:` of dependency versions |
+| `mise.toml` | Pinned toolchain: aws-cli, aws-sam, make, Node, pnpm, Python, uv |
 
 ## Usage
 
@@ -31,11 +32,11 @@ Integration tests need a deployed stack:
 AWS_SAM_STACK_NAME=aws-deploy-practice uv run pytest apps/hello_world/tests/integration
 ```
 
-Docs site (from `architecture/site`):
+Docs site:
 
 ```bash
-npm install
-npm start                    # http://localhost:3000/aws-deploy/
+pnpm install
+pnpm dev:docs                # http://localhost:3000/aws-deploy/
 ```
 
 ## Adding a function

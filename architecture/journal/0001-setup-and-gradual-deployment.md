@@ -38,9 +38,14 @@
 * **Finding / Technical note:** `@docusaurus/theme-mermaid` 3.10.2 needs `@mermaid-js/layout-elk@^0.1.9` (1.x is rejected). `@docusaurus/tsconfig` sets `baseUrl`, which TypeScript 6 deprecates.
 
 ## 7. Segment: GitHub Pages pipeline
-* **Action:** Added `.github/workflows/docs.yml`: builds `architecture/site` with npm and deploys it to GitHub Pages on push to `main`.
+* **Action:** Added `.github/workflows/docs.yml`: builds `architecture/site` and deploys it to GitHub Pages on push to `main`.
 * **Result:** ⚠️ *With warnings*. Written, not run yet: the repo has no GitHub remote.
 * **Finding / Technical note:** Pages serves the site under `/aws-deploy/`, so `baseUrl` is `/aws-deploy/` and links must not be root-absolute.
+
+## 8. Segment: npm to pnpm
+* **Action:** Replaced npm with a pnpm workspace: `pnpm-workspace.yaml` lists `architecture/site` and holds a `catalog:` of versions. pnpm pinned in mise.
+* **Result:** ✅ *Worked*. Install, typecheck and build pass locally.
+* **Finding / Technical note:** npm has workspaces, but no catalogs and no strict isolation. pnpm blocks install scripts by default: `allowBuilds` denies `core-js`, which only prints a funding message.
 
 ---
 
