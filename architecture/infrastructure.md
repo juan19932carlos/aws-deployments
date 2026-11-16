@@ -10,7 +10,7 @@ flowchart LR
     Api --> Alias{{Alias live}}
     Alias -->|old weight| VOld[Version N]
     Alias -->|new weight| VNew[Version N+1]
-    VOld & VNew --> Fn[HelloWorldFunction<br/>python3.14, X-Ray on]
+    VOld & VNew --> Fn[HelloWorldFunction<br/>python3.14, 128 MB, X-Ray on]
 ```
 
 - API Gateway calls the `live` alias, never `$LATEST`.

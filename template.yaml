@@ -7,8 +7,13 @@ Description: >
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
+  Api: 
+    TracingEnabled: true
+    OpenApiVersion: 3.0.1
   Function:
     Timeout: 3
+    # Lambda's default and minimum, made explicit. CPU is allocated in proportion to memory.
+    MemorySize: 128
     Tracing: Active 
 
 Resources:
