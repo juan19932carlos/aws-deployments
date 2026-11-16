@@ -30,5 +30,6 @@ The documentation site is published at <https://juan19932carlos.github.io/aws-de
 | Deployment | AWS SAM on CloudFormation, CodeDeploy for traffic shifting |
 | Runtime | Python 3.14 on AWS Lambda |
 | Python packages | uv workspace: one app per Lambda in `apps/`, shared code in `packages/` |
+| Lambda build | Make: one Makefile per app, run by SAM's `makefile` build method to install dependencies with uv |
 | Toolchain | mise, every tool pinned to an exact version |
 | Docs | Docusaurus in a pnpm workspace, deployed to GitHub Pages |
