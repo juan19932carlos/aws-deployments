@@ -1,6 +1,7 @@
 # aws-deploy
 
-AWS SAM practice project, organized as a uv workspace.
+Sandbox to experiment with and learn about deploying applications to AWS.
+It currently uses SAM as the deployment tool, organized as a uv workspace.
 
 ## Layout
 
