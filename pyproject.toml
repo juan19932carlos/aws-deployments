@@ -1,0 +1,27 @@
+[project]
+name = "aws-deploy"
+version = "0.1.0"
+requires-python = ">=3.14"
+
+[tool.uv]
+# Root is only the workspace container, not a package itself.
+package = false
+
+[tool.uv.workspace]
+members = ["apps/*", "packages/*"]
+
+[dependency-groups]
+dev = [
+    "boto3",
+    "pytest",
+    "requests",
+    "hello-world",
+]
+
+[tool.uv.sources]
+hello-world = { workspace = true }
+
+[tool.pytest.ini_options]
+testpaths = ["apps", "packages"]
+# importlib mode: every app has its own tests/ dir without __init__.py.
+addopts = ["--import-mode=importlib"]

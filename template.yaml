@@ -15,8 +15,8 @@ Resources:
   HelloWorldFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
-      CodeUri: hello_world/
-      Handler: app.lambda_handler
+      CodeUri: apps/hello_world/
+      Handler: hello_world.app.lambda_handler
       Runtime: python3.14
       Architectures:
         - x86_64
@@ -26,6 +26,9 @@ Resources:
           Properties:
             Path: /hello
             Method: get
+    Metadata:
+      # Deliberate: build with uv via apps/hello_world/Makefile; SAM's pip builder ignores uv.lock.
+      BuildMethod: makefile
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
