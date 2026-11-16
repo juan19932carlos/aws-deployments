@@ -40,7 +40,7 @@
 ## 7. Segment: GitHub Pages pipeline
 * **Action:** Added `.github/workflows/docs.yml`: builds `architecture/site` and deploys it to GitHub Pages on push to `main`.
 * **Result:** ⚠️ *With warnings*. Written, not run yet: the repo has no GitHub remote.
-* **Finding / Technical note:** Pages serves the site under `/aws-deploy/`, so `baseUrl` is `/aws-deploy/` and links must not be root-absolute.
+* **Finding / Technical note:** Pages serves the site under the repo name, `/aws-deployments/`, so that is the `baseUrl` and links must not be root-absolute.
 
 ## 8. Segment: npm to pnpm
 * **Action:** Replaced npm with a pnpm workspace: `pnpm-workspace.yaml` lists `architecture/site` and holds a `catalog:` of versions. pnpm pinned in mise.

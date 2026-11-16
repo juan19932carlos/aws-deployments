@@ -36,7 +36,7 @@ Docs site:
 
 ```bash
 pnpm install
-pnpm dev:docs                # http://localhost:3000/aws-deploy/
+pnpm dev:docs                # http://localhost:3000/aws-deployments/
 ```
 
 ## Adding a function

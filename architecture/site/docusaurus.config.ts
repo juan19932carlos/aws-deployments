@@ -6,9 +6,9 @@ const config: Config = {
   tagline: 'Architecture decisions and working journal',
   // Published to GitHub Pages under /<repo>/, so links and assets must not be root-absolute.
   url: 'https://juan19932carlos.github.io',
-  baseUrl: '/aws-deploy/',
+  baseUrl: '/aws-deployments/',
   organizationName: 'juan19932carlos',
-  projectName: 'aws-deploy',
+  projectName: 'aws-deployments',
   trailingSlash: false,
   onBrokenLinks: 'throw',
 

@@ -35,7 +35,7 @@
 - `architecture/` holds ADRs, `infrastructure.md` and the journal, shown by the Docusaurus site in `architecture/site`.
 - Rules for these docs and for the journal are in `.claude/rules/architecture-docs.md` and `.claude/rules/journal.md`.
 - Add each working session to the journal: one file per day, new segments for later work that day.
-- The site deploys to GitHub Pages under `/aws-deploy/`, so links and assets must not be root-absolute.
+- The site deploys to GitHub Pages under `/aws-deployments/`, so links and assets must not be root-absolute.
 
 ## Testing
 
