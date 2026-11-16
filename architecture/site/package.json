@@ -2,10 +2,11 @@
   "name": "docs",
   "private": true,
   "scripts": {
-    "start": "docusaurus start",
-    "build": "docusaurus build",
+    "start": "pnpm readme && docusaurus start",
+    "build": "pnpm readme && docusaurus build",
     "serve": "docusaurus serve",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "readme": "mkdir -p src/pages && cp ../../README.md src/pages/index.md"
   },
   "dependencies": {
     "@docusaurus/core": "catalog:",

@@ -39,13 +39,19 @@
 
 ## 7. Segment: GitHub Pages pipeline
 * **Action:** Added `.github/workflows/docs.yml`: builds `architecture/site` and deploys it to GitHub Pages on push to `main`.
-* **Result:** ⚠️ *With warnings*. Written, not run yet: the repo has no GitHub remote.
+* **Result:** ⚠️ *With warnings*. Pushed to `github.com/juan19932carlos/aws-deployments`. First run failed in `configure-pages`: Pages was not enabled. Enabled it with source *GitHub Actions*.
 * **Finding / Technical note:** Pages serves the site under the repo name, `/aws-deployments/`, so that is the `baseUrl` and links must not be root-absolute.
+* **Finding / Technical note:** The workflow's `GITHUB_TOKEN` cannot turn Pages on; that needs repo admin, so it is a one-time manual step. Push over SSH needed `~/.ssh/config` to name the non-default key `personal-gh`.
 
 ## 8. Segment: npm to pnpm
 * **Action:** Replaced npm with a pnpm workspace: `pnpm-workspace.yaml` lists `architecture/site` and holds a `catalog:` of versions. pnpm pinned in mise.
 * **Result:** ✅ *Worked*. Install, typecheck and build pass locally.
 * **Finding / Technical note:** npm has workspaces, but no catalogs and no strict isolation. pnpm blocks install scripts by default: `allowBuilds` denies `core-js`, which only prints a funding message.
+
+## 9. Segment: README as the site homepage
+* **Action:** Rewrote `README.md` to say what the project is about, without usage steps. The site build copies it to `src/pages/index.md`, so it is the homepage.
+* **Result:** ✅ *Worked*. The site builds locally with the README at `/`.
+* **Finding / Technical note:** First tried a docs instance with `path` at the repo root and `include: ['README.md']`. `include` filters pages, but the MDX loader rule covers the whole `path`, so it also took the journal files and the build failed.
 
 ---
 

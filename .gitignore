@@ -249,3 +249,6 @@ $RECYCLE.BIN/
 node_modules/
 .docusaurus/
 architecture/site/build/
+
+# Docs homepage, copied from README.md at build time
+architecture/site/src/pages/index.md

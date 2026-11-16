@@ -36,6 +36,10 @@
 - Rules for these docs and for the journal are in `.claude/rules/architecture-docs.md` and `.claude/rules/journal.md`.
 - Add each working session to the journal: one file per day, new segments for later work that day.
 - The site deploys to GitHub Pages under `/aws-deployments/`, so links and assets must not be root-absolute.
+- `README.md` says what the project is about and is the site homepage. Usage commands do not go there.
+- The site build copies `README.md` to `src/pages/index.md` (gitignored). Edit the README, never the copy.
+- Deliberate: copy over a docs instance at the repo root, whose MDX loader also grabbed `architecture/` files and broke the build.
+- README must render on GitHub and in Docusaurus: no front matter, no relative links to `architecture/` files.
 
 ## Testing
 

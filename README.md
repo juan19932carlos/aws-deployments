@@ -1,46 +1,34 @@
-# aws-deploy
+# AWS Deploy
 
-Sandbox to experiment with and learn about deploying applications to AWS.
-It currently uses SAM as the deployment tool, organized as a uv workspace.
+A sandbox to learn how applications get deployed to AWS. It is not production: things here are tried, broken and written down.
 
-## Layout
+The point is the mechanism, not the result. Each step records what AWS actually does underneath, not only the command that made it work.
 
-| Path | Purpose |
-|---|---|
-| `apps/<name>/` | One Lambda function: `src/`, `tests/`, `events/`, `pyproject.toml`, `Makefile` |
-| `packages/` | Shared libraries used by apps (workspace members) |
-| `template.yaml` | SAM template; each function's `CodeUri` points to its app |
-| `architecture/` | ADRs, infrastructure diagrams and the working journal |
-| `architecture/site/` | Docusaurus site for `architecture/`, published to GitHub Pages |
-| `pnpm-workspace.yaml` | Node workspace (docs site) and the `catalog:` of dependency versions |
-| `mise.toml` | Pinned toolchain: aws-cli, aws-sam, make, Node, pnpm, Python, uv |
+## What is being explored
 
-## Usage
+- **Packaging a Lambda.** How a function and its dependencies become a deployment artifact, and how to plug a custom build (uv, through a Makefile) into AWS SAM.
+- **Infrastructure as code.** A SAM template that expands into CloudFormation: an API Gateway endpoint in front of a Python Lambda.
+- **Gradual deployment.** Shifting traffic between Lambda versions with an alias and CodeDeploy, guarded by a pre-traffic hook and a CloudWatch alarm that roll back on failure.
+- **Tooling around it.** A reproducible toolchain, and a documentation site published to GitHub Pages by GitHub Actions.
 
-```bash
-mise install                 # toolchain
-uv sync                      # dev environment (.venv)
-uv run pytest apps/*/tests/unit   # unit tests
-sam build                    # builds each app with uv via its Makefile
-sam local invoke HelloWorldFunction -e apps/hello_world/events/event.json
-sam deploy --guided
-```
+SAM is the current deployment tool, not the subject. Other tools, such as CDK or Terraform, may be tried here later.
 
-Integration tests need a deployed stack:
+## How it is documented
 
-```bash
-AWS_SAM_STACK_NAME=aws-deploy-practice uv run pytest apps/hello_world/tests/integration
-```
+Everything is written as the work happens, in `architecture/`:
 
-Docs site:
+- **Decisions:** the lasting choices (ADRs), each with the option that was rejected and why.
+- **Journal:** one entry per working day, split into segments. Each one says what was tried, whether it worked, and what was learned.
+- **Infrastructure:** the stack as it is defined today, with diagrams.
 
-```bash
-pnpm install
-pnpm dev:docs                # http://localhost:3000/aws-deployments/
-```
+The documentation site is published at <https://juan19932carlos.github.io/aws-deployments/>.
 
-## Adding a function
+## Stack
 
-1. Create `apps/<name>/` with its own `pyproject.toml` and `src/<name>/`.
-2. Copy the `Makefile` and rename the target to `build-<LogicalId>`.
-3. Add the function to `template.yaml` with `CodeUri: apps/<name>/` and `Metadata.BuildMethod: makefile`.
+| Area | Tool |
+| --- | --- |
+| Deployment | AWS SAM on CloudFormation, CodeDeploy for traffic shifting |
+| Runtime | Python 3.14 on AWS Lambda |
+| Python packages | uv workspace: one app per Lambda in `apps/`, shared code in `packages/` |
+| Toolchain | mise, every tool pinned to an exact version |
+| Docs | Docusaurus in a pnpm workspace, deployed to GitHub Pages |

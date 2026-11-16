@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - architecture/**
+      - README.md
       - package.json
       - pnpm-lock.yaml
       - pnpm-workspace.yaml
