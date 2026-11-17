@@ -5,6 +5,7 @@
 - Everything is written in English, including the headings.
 - Scope: only work toward the repo's goal, deploying to AWS. Docs site, CI, package managers and repo tooling do not go in the journal.
 - Write only what actually happened and was observed in the session. Never fill gaps with plausible detail; ask instead.
+- The journal is the user's. Add only what the user did or reported, and let them review it before committing.
 - Do not reference other projects, even when a structure was reused from one.
 - Be honest in **Result**. Use ⚠️ when something was built but not verified.
 - The goal is learning: put the AWS mechanism you understood in **Finding / Technical note**, not just the fix.
