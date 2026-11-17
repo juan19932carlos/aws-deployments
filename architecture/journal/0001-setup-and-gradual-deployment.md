@@ -53,6 +53,13 @@
 * **Result:** ✅ *Worked*. Drift was detected only once the memory was declared.
 * **Finding / Technical note:** Drift detection compares only the properties declared in the template. A property left to its default is not checked, so changing it by hand goes unnoticed.
 
+## 7. Segment: Who shifts the traffic
+* **Action:** Opened the processed template in the CloudFormation console, and watched a deployment in the CodeDeploy console.
+* **Result:** ✅ *Worked*. SAM generates a CodeDeploy deployment group, and the traffic shift and its events show up in CodeDeploy.
+* **Finding / Technical note:** The shift is run by CodeDeploy, not Lambda. Lambda only routes by the weights on the alias; CodeDeploy raises them step by step, checks the alarm and rolls back.
+* **Finding / Technical note:** `DeploymentPreference` expands into a CodeDeploy application, a deployment group, a service role, and an `UpdatePolicy` on the alias that hands its update to CodeDeploy.
+* **Finding / Technical note:** A Lambda deployment in CodeDeploy has three phases: `BeforeAllowTraffic` (pre-traffic hook), `AllowTraffic` (the shift) and `AfterAllowTraffic` (post-traffic hook, none here).
+
 ---
 
 ## 📌 Summary and Next Steps
