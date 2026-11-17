@@ -29,10 +29,9 @@ sequenceDiagram
     CD->>Hook: invoke (DeploymentId, HookExecutionId)
     Hook->>CD: PutLifecycleEventHookExecutionStatus
     alt Succeeded
-        loop every minute, +10%
-            CD->>Alias: shift weight to new version
-            CD->>Alarm: check state
-        end
+        CD->>Alias: 10% to new version
+        CD->>Alarm: check state for 5 minutes
+        CD->>Alias: remaining 90% to new version
     else Failed or alarm in ALARM
         CD->>Alias: roll back to old version
     end
@@ -43,4 +42,4 @@ sequenceDiagram
 | `HelloWorldFunction` | `AWS::Serverless::Function` | The app, built from `apps/hello_world` |
 | `ErrorsAlarm` | `AWS::CloudWatch::Alarm` | `Errors > 0` on the new version behind `live`, 1-minute period |
 | `PreTrafficHook` | `AWS::Serverless::Function` | Inline. Reports `HOOK_STATUS` to CodeDeploy. Named `CodeDeployHook_*` |
-| CodeDeploy app, group, role | Created by SAM | Run the `Linear10PercentEvery1Minute` shift |
+| CodeDeploy app, group, role | Created by SAM | Run the `Canary10Percent5Minutes` shift |

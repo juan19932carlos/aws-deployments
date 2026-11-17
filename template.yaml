@@ -28,7 +28,7 @@ Resources:
       # Publishes a new immutable version on each code change and moves the `live` alias to it.
       AutoPublishAlias: live
       DeploymentPreference:
-        Type: Linear10PercentEvery1Minute
+        Type: Canary10Percent5Minutes
         Alarms:
           - !Ref ErrorsAlarm
         Hooks:
