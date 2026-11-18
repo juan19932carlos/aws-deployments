@@ -16,10 +16,12 @@ dev = [
     "pytest",
     "requests",
     "hello-world",
+    "pre-traffic-hook",
 ]
 
 [tool.uv.sources]
 hello-world = { workspace = true }
+pre-traffic-hook = { workspace = true }
 
 [tool.pytest.ini_options]
 testpaths = ["apps", "packages"]

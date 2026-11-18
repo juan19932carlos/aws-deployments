@@ -1,0 +1,10 @@
+[project]
+name = "pre-traffic-hook"
+version = "0.1.0"
+requires-python = ">=3.14"
+# boto3 is not listed: the Lambda Python runtime ships it, so the zip needs no dependencies.
+dependencies = []
+
+[build-system]
+requires = ["uv_build>=0.13.8,<0.14"]
+build-backend = "uv_build"
