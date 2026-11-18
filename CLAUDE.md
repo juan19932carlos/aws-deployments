@@ -13,6 +13,9 @@
 
 - uv workspace: each Lambda lives in `apps/<name>/`, shared code in `packages/`.
 - Each app owns its `src/`, `tests/`, `events/`, `pyproject.toml` and `Makefile`.
+- Exception: `pre_traffic_hook` has no Makefile. Only `template-cfn.yaml` uses it; `template.yaml` keeps the hook inline.
+- `template-cfn.yaml` deploys with the AWS CLI. `aws cloudformation package` ignores `InlineCode` and zips the repo root.
+- `package` zips `src/` as is, `__pycache__` included, and a new hash means a new Lambda version. Clean it first.
 
 ## Build
 

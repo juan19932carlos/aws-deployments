@@ -1,0 +1,104 @@
+# Deployed with the AWS CLI (`aws cloudformation package` + `deploy`), without the SAM CLI.
+# The SAM transform below still runs, server side, inside CloudFormation.
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  aws-deploy-practice
+
+  Sample SAM Template for aws-deploy-practice
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Api: 
+    TracingEnabled: true
+    OpenApiVersion: 3.0.1
+  Function:
+    Timeout: 3
+    # Lambda's default and minimum, made explicit. CPU is allocated in proportion to memory.
+    MemorySize: 128
+    Tracing: Active 
+
+Resources:
+  HelloWorldFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      # Built artifact, not source: `aws cloudformation package` zips this dir as is, it builds nothing.
+      CodeUri: build/HelloWorldFunction/
+      Handler: hello_world.app.lambda_handler
+      Runtime: python3.14
+      Architectures:
+        - x86_64
+      # Publishes a new immutable version on each code change and moves the `live` alias to it.
+      AutoPublishAlias: live
+      DeploymentPreference:
+        Type: Canary10Percent5Minutes
+        Alarms:
+          - !Ref ErrorsAlarm
+        Hooks:
+          PreTraffic: !Ref PreTrafficHook
+      Events:
+        HelloWorld:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /hello
+            Method: get
+
+  # Fires if the NEW version throws any unhandled error during the shift -> CodeDeploy rolls back.
+  ErrorsAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmDescription: Errors > 0 on the new version behind the live alias
+      Namespace: AWS/Lambda
+      MetricName: Errors
+      Dimensions:
+        - Name: Resource
+          Value: !Sub "${HelloWorldFunction}:live"
+        - Name: FunctionName
+          Value: !Ref HelloWorldFunction
+        - Name: ExecutedVersion
+          # Explicit list form, as the SAM CLI sends it. CloudFormation passes the short dotted form
+          # unresolved to the transform and fails with "Version.Version does not exist".
+          Value: !GetAtt [HelloWorldFunction, Version.Version]
+      Statistic: Sum
+      Period: 60
+      EvaluationPeriods: 1
+      Threshold: 0
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+
+  # CodeDeploy invokes this before shifting any traffic and waits for it to report a status.
+  PreTrafficHook:
+    Type: AWS::Serverless::Function
+    Properties:
+      # Deliberate: SAM's CodeDeploy role may only invoke functions named CodeDeployHook_*.
+      FunctionName: !Sub "CodeDeployHook_${AWS::StackName}-PreTraffic"
+      # Source dir, not inline: `aws cloudformation package` ignores InlineCode and would zip the repo root.
+      # No build step: its only dependency, boto3, ships with the Lambda runtime.
+      CodeUri: apps/pre_traffic_hook/src/
+      Handler: pre_traffic_hook.app.handler
+      Runtime: python3.14
+      Timeout: 10
+      Environment:
+        Variables:
+          # Set to Failed to simulate a failing check and watch CodeDeploy roll back.
+          HOOK_STATUS: Succeeded
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action: codedeploy:PutLifecycleEventHookExecutionStatus
+              Resource: !Sub "arn:${AWS::Partition}:codedeploy:${AWS::Region}:${AWS::AccountId}:deploymentgroup:${ServerlessDeploymentApplication}/*"
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  HelloWorldApi:
+    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}/Prod/hello/"
+  HelloWorldFunction:
+    Description: "Hello World Lambda Function ARN"
+    Value: !GetAtt HelloWorldFunction.Arn
+  HelloWorldFunctionIamRole:
+    Description: "Implicit IAM Role created for Hello World function"
+    Value: !GetAtt HelloWorldFunctionRole.Arn
