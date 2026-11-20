@@ -1,6 +1,9 @@
 [tools]
 aws-cli = "2.40.3"
 aws-sam = "1.172.1"
+# Elastic Beanstalk CLI (eb), from PyPI through the pipx backend.
+# [crt] adds awscrt, required by the login credential provider (`aws login`).
+awsebcli = { version = "3.27.7", uvx_args = "--with botocore[crt]" }
 # Node + pnpm run the docs site (architecture/site), a pnpm workspace package.
 node = "26.13.1"
 pnpm = "12.21.0"
