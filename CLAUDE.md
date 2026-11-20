@@ -14,6 +14,12 @@
 - uv workspace: each Lambda lives in `apps/<name>/`, shared code in `packages/`.
 - Each app owns its `src/`, `tests/`, `events/`, `pyproject.toml` and `Makefile`.
 - Exception: `pre_traffic_hook` has no Makefile. Only `template-cfn.yaml` uses it; `template.yaml` keeps the hook inline.
+- Exception: `hello_beanstalk` (Elastic Beanstalk) has `application.py` at its root, no `src/`, no Makefile. EB imports it from the bundle root.
+- SAM files stay at the repo root; EB lives entirely in its app folder, where `eb init` writes `.elasticbeanstalk/`.
+- Run `eb` commands from `apps/hello_beanstalk/`: its gitignored `.elasticbeanstalk/config.yml` holds app, region and profile.
+- EB app is in `us-west-2`, not `us-east-1`: `eb init`'s prompt defaults to Oregon and it was accepted. Not yet decided to move it.
+- EB runs Python 3.15 (newest EB platform); local tests use 3.14. Fine: the app uses only the stdlib.
+- EB CLI zips the whole app folder (`sc: null`, no git), tests and `__pycache__` included. An `.ebignore` is pending.
 - `template-cfn.yaml` deploys with the AWS CLI. `aws cloudformation package` ignores `InlineCode` and zips the repo root.
 - `package` zips `src/` as is, `__pycache__` included, and a new hash means a new Lambda version. Clean it first.
 
@@ -39,6 +45,7 @@
 - Keep `packageManager` in `package.json` in line with pnpm in mise; CI reads the pnpm version from it.
 - Node packages use pnpm only, never npm or yarn. Versions live in the `catalog:` of `pnpm-workspace.yaml`.
 - Deliberate: pnpm over npm for catalogs and strict dependencies, so future Node apps share one workspace.
+- `awsebcli` needs the botocore `[crt]` extra: without it, `aws login` credentials fail with MissingDependencyException.
 - Python stays on 3.14 to match an available Lambda runtime, even though mise offers 3.15.
 - No root mise tasks yet; deciding later whether to add them.
 

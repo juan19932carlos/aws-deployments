@@ -1,0 +1,8 @@
+[project]
+name = "hello-beanstalk"
+version = "0.1.0"
+requires-python = ">=3.14"
+# No dependencies: plain WSGI on the stdlib. EB reads requirements.txt, not this file.
+dependencies = []
+# No [build-system]: uv treats this member as a virtual project. EB does not
+# install it as a package; it imports application.py from the bundle root.
